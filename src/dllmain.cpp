@@ -1,38 +1,50 @@
 // dllmain.cpp : Defines the entry point for the DLL application.
-#include "pch.h"
+#include "include/pch.h"
+#include "include/insert_instructions.h"
+
+#include <conio.h>
 #include <iostream>
-#define NOP 0x90
+#include <string>
 
-unsigned char* hook_location = (unsigned char*)0x005253B2;
+#pragma warning(disable: 4100)
+#pragma warning(disable: 5039) // todo fix the bugs, rather than disable their warnings
 
-unsigned char MOVE_OPCODES[] = {
-    0xC7, 0x45, 0x08, 0x09, 0x00, 0x00, 0x00
-};
-
-void move_value() {
-    for (int i = 0; i < 7; i++) {
-            *(hook_location + i) = MOVE_OPCODES[i];
-    }
+DWORD __stdcall eject_thread(LPVOID lpParameter) {
+    HMODULE hModule = reinterpret_cast<HMODULE>(lpParameter);
+    fclose(stdin);
+    fclose(stdout);
+    FreeConsole();
+    FreeLibraryAndExitThread(hModule, 0);
 }
 
-void clear_instructions() {
-    for (int i = 0; i < 10; i++) {
-        *(hook_location + i) = NOP;
-    }
-}
+DWORD WINAPI attached_main(HMODULE hModule) {
+    AllocConsole();
+    FILE* fpr;
+    FILE* fpw;
+    freopen_s(&fpw, "CONOUT$", "w", stdout);
+    freopen_s(&fpr, "CONIN$", "r", stdin); // todo error handling for if either of these turn out to be 0
 
-DWORD WINAPI attached_main(LPVOID lpParameter) {
+    clear_instructions();
+
+    std::string user_input;
+    while (1) {
+        getline(std::cin, user_input);
+
+        if (user_input == "q") break;
+    }
+
+    fclose(fpw);
+    fclose(fpr);
+    CreateThread(0, 0, eject_thread, hModule, 0, 0);
     return 0;
 }
 
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD  ul_reason_for_call, LPVOID lpReserved) {
     DWORD old_protect;
 
-
     if (ul_reason_for_call == DLL_PROCESS_ATTACH) {
         VirtualProtect((void*)hook_location, 10, PAGE_EXECUTE_READWRITE, &old_protect);
-        clear_instructions();
-        move_value();
+        CreateThread(nullptr, 0, (LPTHREAD_START_ROUTINE)attached_main, hModule, 0, nullptr);
     }
 
     return TRUE;
