@@ -1,12 +1,14 @@
 // dllmain.cpp : Defines the entry point for the DLL application.
 #include "include/pch.h"
 #include "include/insert_instructions.h"
+#include "include/error_handle.h"
 
 #include <conio.h>
 #include <iostream>
 #include <string>
 
 #pragma warning(disable: 4100)
+#pragma warning(disable: 4702)
 #pragma warning(disable: 5039) // todo fix the bugs, rather than disable their warnings
 
 DWORD __stdcall eject_thread(LPVOID lpParameter) {
@@ -23,6 +25,7 @@ DWORD WINAPI attached_main(HMODULE hModule) {
     FILE* fpw;
     freopen_s(&fpw, "CONOUT$", "w", stdout);
     freopen_s(&fpr, "CONIN$", "r", stdin); // todo error handling for if either of these turn out to be 0
+    if (fpr == 0 || fpw == 0) die("there was an error when opening the console");
 
     clear_instructions();
 
@@ -32,6 +35,14 @@ DWORD WINAPI attached_main(HMODULE hModule) {
         getline(std::cin, user_input);
 
         if (user_input == "q") break;
+
+        int level = atoi(user_input.c_str());
+
+        if (level > 0) {
+            // todo choose the level
+        } else {
+            // todo
+        }
     }
 
     fclose(fpw);

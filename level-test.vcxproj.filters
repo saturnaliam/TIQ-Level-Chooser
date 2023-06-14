@@ -24,6 +24,9 @@
     <ClCompile Include="src\include\insert_instructions.cpp">
       <Filter>Header Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\include\error_handle.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\include\framework.h">
@@ -33,6 +36,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\include\pch.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\include\error_handle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
