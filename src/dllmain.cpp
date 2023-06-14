@@ -28,7 +28,7 @@ DWORD WINAPI attached_main(HMODULE hModule) {
 
     std::string user_input;
     while (1) {
-        printf("Please put in the level you wish to go to: ");
+        printf("Please enter the level you wish to go to: ");
         getline(std::cin, user_input);
 
         if (user_input == "q") break;
