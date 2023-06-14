@@ -5,7 +5,7 @@ unsigned char mov_opcodes[7] = {
     MOV, 0x45, 0x08, NULL, 0x00, 0x00, 0x00
 };
 
-unsigned char* hook_location = (unsigned char*)0x5253B2;
+unsigned char* hook_location = (unsigned char*)(GetModuleHandle(NULL) + 0xE47B2);
 
 void clear_instructions() {
     for (int i = 0; i < 10; i++) {
