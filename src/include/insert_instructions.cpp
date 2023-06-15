@@ -1,15 +1,19 @@
 #include "pch.h"
 #include "insert_instructions.h"
 
+#pragma warning(disable: 5045)
+
 unsigned char mov_opcodes[7] = {
     MOV, 0x45, 0x08, NULL, 0x00, 0x00, 0x00
 };
 
-unsigned char* hook_location = (unsigned char*)(GetModuleHandle(NULL) + 0xE47B2);
+int* hook_location = (int*)((int)(GetModuleHandle(NULL)) + 0xE47B2);
 
 void clear_instructions() {
+    printf("%p\n", hook_location);
     for (int i = 0; i < 10; i++) {
         *(hook_location + i) = NOP;
+        printf("%d\n", *(hook_location + i));
     }
 
     return;

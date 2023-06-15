@@ -8,10 +8,9 @@
 #include <string>
 
 #pragma warning(disable: 4100)
-#pragma warning(disable: 4702)
-#pragma warning(disable: 5039) // todo fix the bugs, rather than disable their warnings
+#pragma warning(disable: 5039) // disabling warnings that dont rly matter
 
-DWORD __stdcall eject_thread(LPVOID lpParameter) {
+DWORD_PTR __stdcall eject_thread(LPVOID lpParameter) {
     HMODULE hModule = reinterpret_cast<HMODULE>(lpParameter);
     fclose(stdin);
     fclose(stdout);
@@ -19,19 +18,30 @@ DWORD __stdcall eject_thread(LPVOID lpParameter) {
     FreeLibraryAndExitThread(hModule, 0);
 }
 
-DWORD WINAPI attached_main(HMODULE hModule) {
+DWORD_PTR WINAPI attached_main(HMODULE hModule) {
     AllocConsole();
     FILE* fpr;
     FILE* fpw;
     freopen_s(&fpw, "CONOUT$", "w", stdout);
-    freopen_s(&fpr, "CONIN$", "r", stdin); // todo error handling for if either of these turn out to be 0
+    freopen_s(&fpr, "CONIN$", "r", stdin);
     if (fpr == 0 || fpw == 0) die("there was an error when opening the console");
 
-    clear_instructions();
+    DWORD_PTR current_level = (DWORD_PTR)GetModuleHandle(NULL);
+    current_level = *(DWORD_PTR*)(current_level + 0xC95B64);
+    current_level = *(DWORD_PTR*)(current_level + 0x24);
+    current_level = *(DWORD_PTR*)(current_level + 0xA8C);
+    current_level = *(DWORD_PTR*)(current_level + 0x4);
+    current_level = *(DWORD_PTR*)(current_level + 0x2C);
+    current_level = *(DWORD_PTR*)(current_level + 0x50);
+    current_level = *(DWORD_PTR*)(current_level + 0x264);
+    int* level_addr = (int*)(current_level + 0x4C);
+
 
     std::string user_input;
+    //printf("%p\n", hook_location);
+    clear_instructions();
     while (1) {
-        printf("Please enter the level you wish to go to: ");
+        printf("Please enter the level you wish to go to, or [q]uit: ");
         getline(std::cin, user_input);
 
         if (user_input == "q") break;
@@ -39,9 +49,12 @@ DWORD WINAPI attached_main(HMODULE hModule) {
         int level = atoi(user_input.c_str());
 
         if (level > 0) {
-            // todo choose the level
+            insert_mov_number((unsigned char)level);
+            insert_mov();
+            while (*level_addr != level);
+            clear_instructions();
         } else {
-            // todo
+            printf("Invalid number! Please input a valid level!\n");
         }
     }
 
@@ -51,11 +64,12 @@ DWORD WINAPI attached_main(HMODULE hModule) {
     return 0;
 }
 
-BOOL APIENTRY DllMain(HMODULE hModule, DWORD  ul_reason_for_call, LPVOID lpReserved) {
-    DWORD old_protect;
+BOOL APIENTRY DllMain(HMODULE hModule, DWORD_PTR  ul_reason_for_call, LPVOID lpReserved) {
+    DWORD_PTR old_protect;
 
     if (ul_reason_for_call == DLL_PROCESS_ATTACH) {
         VirtualProtect((void*)hook_location, 10, PAGE_EXECUTE_READWRITE, &old_protect);
+        clear_instructions();
         CreateThread(nullptr, 0, (LPTHREAD_START_ROUTINE)attached_main, hModule, 0, nullptr);
     }
 
