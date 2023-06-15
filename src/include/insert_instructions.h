@@ -5,7 +5,7 @@
 #define MOV 0xC7
 
 #include <iostream>
-extern int* hook_location;
+extern unsigned char* hook_location;
 
 extern unsigned char mov_opcodes[7];
 

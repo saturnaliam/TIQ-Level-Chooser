@@ -38,7 +38,7 @@ DWORD_PTR WINAPI attached_main(HMODULE hModule) {
 
 
     std::string user_input;
-    //printf("%p\n", hook_location);
+
     clear_instructions();
     while (1) {
         printf("Please enter the level you wish to go to, or [q]uit: ");
