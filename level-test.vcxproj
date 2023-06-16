@@ -29,12 +29,10 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="src\include\error_handle.cpp" />
     <ClCompile Include="src\include\insert_instructions.cpp" />
     <ClCompile Include="src\include\pch.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\include\error_handle.h" />
     <ClInclude Include="src\include\framework.h" />
     <ClInclude Include="src\include\insert_instructions.h" />
     <ClInclude Include="src\include\pch.h" />

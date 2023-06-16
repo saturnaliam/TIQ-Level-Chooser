@@ -8,8 +8,10 @@
 extern unsigned char* hook_location;
 
 extern unsigned char mov_opcodes[7];
+extern unsigned char old_opcodes[10];
 
 void clear_instructions();
+void insert_old();
 void insert_mov();
 
 void insert_mov_number(unsigned char value);
