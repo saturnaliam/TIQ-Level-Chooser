@@ -59,7 +59,10 @@ DWORD_PTR WINAPI attached_main(HMODULE hModule) {
             insert_mov_number((unsigned char)level_ids[level - 1]);
             insert_mov();
             printf("Answer your current question!");
-            while (*level_addr != level_ids[level - 1]);
+
+            while (*level_addr != level_ids[level - 1]) {
+                if (GetAsyncKeyState('Q')) break;
+            }
 
             clear_instructions();
         } else {
