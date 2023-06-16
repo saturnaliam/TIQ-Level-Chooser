@@ -10,6 +10,8 @@
 #pragma warning(disable: 4100)
 #pragma warning(disable: 5039) // disabling warnings that dont rly matter
 
+
+
 void obtain_level_address(int* &address) {
     int temp = (int)GetModuleHandle(NULL);
     temp = *(int*)(temp + 0xC95B64);
@@ -24,25 +26,43 @@ void obtain_level_address(int* &address) {
     return;
 }
 
-void debug_on(int* level_addr) {
-    while (1) {
-        int* ebpfour;
-        __asm {
-            pushad
-            mov eax, dword ptr ss:[ebp + 0x8]
-            mov ebpfour, eax
-            popad
-        }
+//// void debug_on(int* level_addr) {
+////     int i = 0;
+////     int level_ids[110];
+////     for (int z = 0; z < 110; z++) {
+////         level_ids[z] = 0;
+////     }
 
-        printf("Level Address: %p\nLevel: %d\nHook Address: %p\nebp + 8: %p\nebp + 8 value: %d\n\n", level_addr, *level_addr, hook_location, ebpfour, *ebpfour);
+////     while (1) {
+////         int* ebpfour;
+////         __asm {
+////             pushad
+////             mov eax, dword ptr ss:[ebp + 0x8]
+////             mov ebpfour, eax
+////             popad
+////         }
 
-        if (GetAsyncKeyState('Q')) break;
+////         printf("Level Address: %p\nLevel: %d\nHook Address: %p\nebp + 8: %p\nebp + 8 value: %d\n\n", level_addr, *level_addr, hook_location, ebpfour, *ebpfour);
 
-        printf("\r\x1b[A\x1b[A\x1b[A\x1b[A\x1b[A\x1b[A");
-    }
+////         if (GetAsyncKeyState('Q')) break;
 
-    return;
-}
+////         if (GetAsyncKeyState('G')) {
+////             if (level_ids[i - 1] != *level_addr) {
+////                 level_ids[i] = *level_addr;
+////                 i++;
+////             }
+////         }
+
+////         printf("\r\x1b[A\x1b[A\x1b[A\x1b[A\x1b[A\x1b[A");
+////     }
+
+////     for (int x = 0; x < 109; x++) {
+////         printf("%d, ", level_ids[x]);
+////     }
+////     printf("\n");
+
+////     return;
+//// }
 
 DWORD_PTR __stdcall eject_thread(LPVOID lpParameter) {
     HMODULE hModule = reinterpret_cast<HMODULE>(lpParameter);
@@ -52,7 +72,6 @@ DWORD_PTR __stdcall eject_thread(LPVOID lpParameter) {
     FreeLibraryAndExitThread(hModule, 0);
 }
 
-// todo complete rewrite kinda needed lol this shit is a MESS
 DWORD_PTR WINAPI attached_main(HMODULE hModule) {
     AllocConsole();
     FILE* fpr;
@@ -81,11 +100,6 @@ DWORD_PTR WINAPI attached_main(HMODULE hModule) {
         getline(std::cin, user_input);
 
         if (tolower(user_input[0]) == 'q') break;
-
-        if (user_input == "debug") {
-            debug_on(level_addr);
-            continue;
-        }
 
         int level = atoi(user_input.c_str());
 
