@@ -10,7 +10,7 @@
 #pragma warning(disable: 4100)
 #pragma warning(disable: 5039) // disabling warnings that dont rly matter
 
-
+int level_ids[100] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192 };
 
 void obtain_level_address(int* &address) {
     int temp = (int)GetModuleHandle(NULL);
@@ -103,13 +103,14 @@ DWORD_PTR WINAPI attached_main(HMODULE hModule) {
 
         int level = atoi(user_input.c_str());
 
-        if (level > 0) {
-            insert_mov_number((unsigned char)level);
+        if (level > 0 && level <= 100) {
+            insert_mov_number((unsigned char)level_ids[level - 1]);
             insert_mov();
-            while (*level_addr != level);
+            printf("Answer your current question!\n\n");
+            while (*level_addr != level_ids[level - 1]);
             clear_instructions();
         } else {
-            printf("Invalid number! Please input a valid level!\n");
+            printf("Invalid number! Please input a valid level!\n\n");
         }
     }
 
